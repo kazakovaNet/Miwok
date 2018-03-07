@@ -28,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        findLongestName(new String[]{"Kimberli", "Apolonia"});
+
         // Set the content of the activity to use the activity_main.xml layout file
         setContentView(R.layout.activity_main);
 
@@ -94,5 +96,18 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(phrasesIntent);
             }
         });
+    }
+
+    public String findLongestName(String[] names) {
+        int size = names.length;
+        String longestName = names[0];
+
+        for (int i = 0; i < size; i++) {
+            if (names[i].length() > longestName.length()) {
+                longestName = names[i];
+            }
+        }
+
+        return longestName;
     }
 }
