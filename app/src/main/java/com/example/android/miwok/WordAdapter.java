@@ -15,6 +15,10 @@ import java.util.ArrayList;
 public class WordAdapter extends ArrayAdapter<Word> {
 
     private static final String LOG_TAG = WordAdapter.class.getSimpleName();
+
+    /**
+     * Resource ID for the background color for this list of words
+     */
     private int colorResourceId;
 
     /**
@@ -58,8 +62,11 @@ public class WordAdapter extends ArrayAdapter<Word> {
         // Get the {@link Word} object located at this position in the list
         Word currentWord = getItem(position);
 
+        // Set the theme color for the list item
         View parentLayout = listItemView.findViewById(R.id.parent_layout);
+        // Find the color that the resource ID maps to
         int color = ContextCompat.getColor(getContext(), colorResourceId);
+        // Set the background color of the text container View
         parentLayout.setBackgroundColor(color);
 
         // Find the TextView in the list_item.xml layout with the ID miwok_text_view
