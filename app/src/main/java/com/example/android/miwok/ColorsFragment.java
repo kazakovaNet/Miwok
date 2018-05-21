@@ -1,34 +1,25 @@
-/*
- * Copyright (C) 2016 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.example.android.miwok;
+
 
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class PhrasesActivity extends AppCompatActivity {
-    
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class ColorsFragment extends Fragment {
     /**
      * Handles playback of all the sound files
      */
@@ -89,40 +80,51 @@ public class PhrasesActivity extends AppCompatActivity {
         }
     };
     
+    public ColorsFragment() {
+        // Required empty public constructor
+    }
+    
+    
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.word_list);
-        
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View rootView =inflater.inflate(R.layout.word_list, container,false);
+    
         // Create and setup the {@link AudioManager} to request audio focus
-        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        
+        audioManager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
+    
         // Create a list of words
         final ArrayList<Word> words = new ArrayList<>();
-        words.add(new Word("Where are you going?", "minto wuksus", R.raw.phrase_where_are_you_going));
-        words.add(new Word("What is your name?", "tinnә oyaase'nә", R.raw.phrase_what_is_your_name));
-        words.add(new Word("My name is...", "oyaaset...", R.raw.phrase_my_name_is));
-        words.add(new Word("How are you feeling?", "michәksәs?", R.raw.phrase_how_are_you_feeling));
-        words.add(new Word("I’m feeling good.", "kuchi achit", R.raw.phrase_im_feeling_good));
-        words.add(new Word("Are you coming?", "әәnәs'aa?", R.raw.phrase_are_you_coming));
-        words.add(new Word("Yes, I’m coming.", "hәә’ әәnәm", R.raw.phrase_yes_im_coming));
-        words.add(new Word("I’m coming.", "әәnәm", R.raw.phrase_im_coming));
-        words.add(new Word("Let’s go.", "yoowutis", R.raw.phrase_lets_go));
-        words.add(new Word("Come here.", "әnni'nem", R.raw.phrase_come_here));
-        
+        words.add(new Word("red", "weṭeṭṭi", R.drawable.color_red, R.raw.color_red));
+        words.add(new Word("green", "chokokki", R.drawable.color_green, R.raw.color_green));
+        words.add(new Word("brown", "ṭakaakki", R.drawable.color_brown, R.raw.color_brown));
+        words.add(new Word("gray", "ṭopoppi", R.drawable.color_gray, R.raw.color_gray));
+        words.add(new Word("black", "kululli", R.drawable.color_black, R.raw.color_black));
+        words.add(new Word("white", "kelelli", R.drawable.color_white, R.raw.color_white));
+        words.add(
+                new Word(
+                        "dusty yellow", "ṭopiisә", R.drawable.color_dusty_yellow, R.raw.color_dusty_yellow));
+        words.add(
+                new Word(
+                        "mustard yellow",
+                        "chiwiiṭә",
+                        R.drawable.color_mustard_yellow,
+                        R.raw.color_mustard_yellow));
+    
         // Create an {@link WordAdapter}, whose data source is a list of {@link Word}s. The
         // adapter knows how to create list items for each item in the list.
-        WordAdapter adapter = new WordAdapter(this, words, R.color.category_phrases);
-        
+        WordAdapter adapter = new WordAdapter(getActivity(), words, R.color.category_colors);
+    
         // Find the {@link ListView} object in the view hierarchy of the {@link Activity}.
         // There should be a {@link ListView} with the view ID called list, which is declared in the
         // word_list.xml layout file.
-        ListView listView = findViewById(R.id.list);
-        
+        ListView listView = rootView.findViewById(R.id.list);
+    
         // Make the {@link ListView} use the {@link WordAdapter} we created above, so that the
         // {@link ListView} will display list items for each {@link Word} in the list.
         listView.setAdapter(adapter);
-        
+    
+        // Set a click listener to play the audio when the list item is clicked on
         listView.setOnItemClickListener(
                 new AdapterView.OnItemClickListener() {
                     @Override
@@ -130,45 +132,39 @@ public class PhrasesActivity extends AppCompatActivity {
                         // Release the media player if it currently exists because we are about to
                         // play a different sound file
                         releaseMediaPlayer();
-                        
+                    
                         // Get the {@link Word} object at the given position the user clicked on
                         Word word = words.get(position);
-                        
-                        Log.v("PhrasesActivity", "Current word: " + word);
-                        
+                    
+                        Log.v("ColorsActivity", "Current word: " + word);
+                    
                         // Request audio focus so in order to play the audio file. The app needs to play a
                         // short audio file, so we will request audio focus with a short amount of time
                         // with AUDIOFOCUS_GAIN_TRANSIENT.
                         int result = audioManager.requestAudioFocus(audioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
-                        
+                    
                         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
                             // We have audio focus now.
-                            
+                        
                             // Create and setup the {@link MediaPlayer} for the audio resource associated
                             // with the current word
-                            mediaPlayer = MediaPlayer.create(PhrasesActivity.this, word.getSoundResourceId());
+                            mediaPlayer = MediaPlayer.create(getActivity(), word.getSoundResourceId());
                             mediaPlayer.start();
-                            
+                        
                             // Setup a listener on the media player, so that we can stop and release the
                             // media player once the sound has finished playing.
                             mediaPlayer.setOnCompletionListener(completionListener);
                         }
                     }
                 });
-    }
-    
-    @Override
-    protected void onPause() {
-        super.onPause();
         
-        // Clean up the media player
-        releaseMediaPlayer();
+        return rootView;
     }
     
     @Override
-    protected void onStop() {
+    public void onStop() {
         super.onStop();
-        
+    
         // When the activity is stopped, release the media player resources because we won't
         // be playing any more sounds.
         releaseMediaPlayer();
@@ -194,4 +190,5 @@ public class PhrasesActivity extends AppCompatActivity {
             audioManager.abandonAudioFocus(audioFocusChangeListener);
         }
     }
+    
 }
